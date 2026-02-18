@@ -1,9 +1,9 @@
 import logging
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from src.connection_manager import manager
+from app.connection_manager import manager
 
-from src.logging import setup_logging
+from app.logging import setup_logging
 
 setup_logging()
 
@@ -28,8 +28,22 @@ app.add_middleware(
 )
 
 
+@app.get("/", response_model=dict[str, str])
+async def root() -> dict[str, str]:
+    return {
+        "message": "Welcome to the Real-Time Chat Application! Visit /docs for API documentation."
+    }
+
+
 @app.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
+
+    origin = websocket.headers.get("origin")
+    if origin not in origins:
+        logger.warning(f"Connection attempt from disallowed origin: {origin}")
+        await websocket.close(code=1008)  # Policy Violation
+        return
+
     await manager.connect(websocket)
     try:
         await manager.broadcast(f"Client #{client_id} joined the chat")

@@ -15,50 +15,46 @@ A simple WebSocket-based real-time chat application built with FastAPI and React
 - 📱 Visual connection status indicators
 - 🆔 Unique client identifiers
 - 🔔 System notifications for user join/leave events
+- 🐳 Docker & Docker Compose support
 
 ## 🛠️ Tech Stack
 
-**Backend:**
-- FastAPI
-- Python 3.13
-- WebSocket
-- Uvicorn
-
-**Frontend:**
-- React 19
-- TypeScript
-- Vite
-- CSS3
-
-## 📋 Prerequisites
-
-- Python >= 3.13
-- Node.js >= 24.13.1
-- npm
+**Backend:** FastAPI, WebSocket 
+**Frontend:** React, TypeScript, Vite
 
 ## 🚀 Quick Start
 
-### 1️⃣ Clone the Repository
+### Using Docker (Recommended)
 
 ```bash
-git clone <your-repo-url>
-cd real-time-chat-application
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
 ```
 
-### 2️⃣ Backend Setup
+Access:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
 
+### Local Development
+
+**Backend:**
 ```bash
 cd backend
-python -m venv venv
-venv\Scripts\activate  # On Windows
+python -m venv .venv
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # macOS/Linux
 pip install -r requirements.txt
-fastapi dev src/main.py
+fastapi dev
 ```
-
 Backend runs on: `http://localhost:8000`
 
-### 3️⃣ Frontend Setup
-
+**Frontend:**
 ```bash
 cd frontend
 npm install
@@ -67,71 +63,66 @@ npm run dev
 
 Frontend runs on: `http://localhost:5173`
 
-### 4️⃣ Start Chatting!
+## 🔌 API Endpoints
 
-Open `http://localhost:5173` in your browser and start chatting! 🎉
+- `GET /` - API welcome message & health check
+- `GET /docs` - Interactive API documentation (Swagger UI)
+- `WS /ws/{client_id}` - WebSocket connection for real-time chat
 
-Open multiple tabs to test multi-user functionality.
+## ⚙️ Configuration
+
+Create a `.env` file in the `backend/` directory:
+
+```bash
+cp backend/.env.template backend/.env
+```
+
+Configure CORS allowed origins:
+
+```env
+# CORS Configuration
+ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+```
+
+Add any additional origins as comma-separated values. See `backend/.env.template` for reference.
+
+## 🎉 Start Chatting!
+
+- **Local Development:** Open `http://localhost:5173`
+- **Docker:** Open `http://localhost:3000`
+
+Open multiple browser tabs or windows to test multi-user chat functionality!
 
 ## 📁 Project Structure
 
 ```
 real-time-chat-application/
+├── docker-compose.yml           # Docker orchestration
+├── .dockerignore                # Docker ignore patterns
 ├── backend/
-│   ├── src/
-│   │   ├── main.py              # FastAPI app & WebSocket endpoint
-│   │   ├── connection_manager.py
-│   │   └── logging.py
-│   └── requirements.txt
+│   ├── Dockerfile               # Backend container config
+│   ├── requirements.txt         # Python dependencies
+│   └── src/
+│       ├── main.py              # FastAPI app & WebSocket endpoint
+│       ├── connection_manager.py # WebSocket connection handler
+│       └── logging.py           # Logging configuration
 └── frontend/
-    ├── src/
-    │   ├── components/
-    │   │   └── ChatApp.tsx      # Main chat component
-    │   ├── App.tsx
-    │   └── styles.css
-    └── package.json
+    ├── Dockerfile               # Frontend container config
+    ├── nginx.conf               # Nginx configuration
+    ├── package.json             # Node dependencies
+    └── src/
+        ├── components/
+        │   └── ChatApp.tsx      # Main chat component
+        ├── App.tsx              # Root component
+        └── styles.css           # Global styles
 ```
+##  License
 
-## ⚙️ Configuration
-
-### Custom WebSocket URL
-
-Create `.env` in the `frontend` directory:
-
-```env
-VITE_WS_URL=ws://localhost:8000
-```
-
-### CORS Settings
-
-Edit `origins` in `backend/src/main.py` to add allowed origins.
-
-## 🏗️ Building for Production
-
-### Frontend
-```bash
-cd frontend
-npm run build
-```
-Output: `frontend/dist/`
-
-### Backend
-```bash
-uvicorn src.main:app --host 0.0.0.0 --port 8000
-```
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-
-## 📝 License
-
-This project is licensed under the MIT License.
+MIT
 
 ## 👨‍💻 Author
 
-**Your Name**
-- GitHub: [@mouakos](https://github.com/mouakos)
+[@mouakos](https://github.com/mouakos)
 
 ---
 

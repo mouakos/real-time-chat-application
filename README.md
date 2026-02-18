@@ -1,46 +1,138 @@
-# real-time-chat-application
+# Real-Time Chat Application 💬
 
-## Requirements
+A simple WebSocket-based real-time chat application built with FastAPI and React.
 
-- Real-time interaction required ➡️ messages must appears instantly for all users
-- Broadcasting ➡️ one user's message must reach all other users immediately
-- Low latency essential ➡️ delay break the user experience
-- Simple but powerful architecture ➡️ easy to understand, yet demonstrates core Websocket concepts
-- Bidirectional communication ➡️ both clients and server can send data anytime
-- Multiple concurrent users ➡️ many clients connected at once, exchanging data
-- Scale naturally ➡️ from 2 users to many, showing FastAPI's async capabilities
+![Chat Demo](https://img.shields.io/badge/status-active-success.svg)
+![Python](https://img.shields.io/badge/python-3.13-blue.svg)
+![Node](https://img.shields.io/badge/node-24.13.1-green.svg)
 
+## ✨ Features
 
-## Key Technical Aspects
+- 🚀 Real-time messaging with WebSocket
+- 👥 Multiple concurrent users support
+- 🔄 Auto-reconnect functionality
+- 🎨 Modern, responsive dark-themed UI
+- 📱 Visual connection status indicators
+- 🆔 Unique client identifiers
+- 🔔 System notifications for user join/leave events
 
-- Multiple users for the app
-- Simultaneous connections (async)
-- Broadcast messages
-- Handle disconnects
-  
-## Architecture
+## 🛠️ Tech Stack
 
-- FastAPI Backend for managing Websockets
-- Simple Frontend (React) for connections, Messages, and the chat window
-- Clint connects to the server which accepts the connection
-- Client sends a message, and the server needs o broadcast to all clients
+**Backend:**
+- FastAPI
+- Python 3.13
+- WebSocket
+- Uvicorn
 
-## Frontend (React) requirements
+**Frontend:**
+- React 19
+- TypeScript
+- Vite
+- CSS3
 
-- Establish Websocket connection to FastAPI backend
-- Maintain chat state ➡️ list of messages in components state
-- Display messages in real time ➡️ render new messages as they arrive
-- Provide input field for composing messages
-- Send messages over websocket when user submits input
+## 📋 Prerequisites
 
-## Connection and User Management
+- Python >= 3.13
+- Node.js >= 24.13.1
+- npm
 
-- Handle connection lifecycle ➡️ on open, on message, on close
-- Generate unique client ID for identification
-- Shown own client ID
-- clean up on unmount ➡️ close Websocket to prevent leaks
+## 🚀 Quick Start
 
-## System requirements
+### 1️⃣ Clone the Repository
 
-- Node.js (>=22.12.0)
-- Installed create-vite command
+```bash
+git clone <your-repo-url>
+cd real-time-chat-application
+```
+
+### 2️⃣ Backend Setup
+
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate  # On Windows
+pip install -r requirements.txt
+fastapi dev src/main.py
+```
+
+Backend runs on: `http://localhost:8000`
+
+### 3️⃣ Frontend Setup
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend runs on: `http://localhost:5173`
+
+### 4️⃣ Start Chatting!
+
+Open `http://localhost:5173` in your browser and start chatting! 🎉
+
+Open multiple tabs to test multi-user functionality.
+
+## 📁 Project Structure
+
+```
+real-time-chat-application/
+├── backend/
+│   ├── src/
+│   │   ├── main.py              # FastAPI app & WebSocket endpoint
+│   │   ├── connection_manager.py
+│   │   └── logging.py
+│   └── requirements.txt
+└── frontend/
+    ├── src/
+    │   ├── components/
+    │   │   └── ChatApp.tsx      # Main chat component
+    │   ├── App.tsx
+    │   └── styles.css
+    └── package.json
+```
+
+## ⚙️ Configuration
+
+### Custom WebSocket URL
+
+Create `.env` in the `frontend` directory:
+
+```env
+VITE_WS_URL=ws://localhost:8000
+```
+
+### CORS Settings
+
+Edit `origins` in `backend/src/main.py` to add allowed origins.
+
+## 🏗️ Building for Production
+
+### Frontend
+```bash
+cd frontend
+npm run build
+```
+Output: `frontend/dist/`
+
+### Backend
+```bash
+uvicorn src.main:app --host 0.0.0.0 --port 8000
+```
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+
+## 📝 License
+
+This project is licensed under the MIT License.
+
+## 👨‍💻 Author
+
+**Your Name**
+- GitHub: [@mouakos](https://github.com/mouakos)
+
+---
+
+⭐ Star this repo if you find it helpful!

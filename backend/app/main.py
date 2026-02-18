@@ -34,6 +34,11 @@ async def root() -> dict[str, str]:
     }
 
 
+@app.get("/health", response_model=dict[str, str])
+async def health_check() -> dict[str, str]:
+    return {"status": "ok"}
+
+
 @app.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
 

@@ -2,6 +2,7 @@ import logging
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from app.connection_manager import manager
+from app.config import settings
 
 from app.logging import setup_logging
 
@@ -12,16 +13,14 @@ logger = logging.getLogger("chat_app")
 
 app = FastAPI(title="Real-Time Chat Application", version="1.0.0")
 
-# -- CORS (allow Vite frontend to connect) --
 
-origins = [
-    "http://localhost:5173",  # Vite dev server
-    "http://127.0.0.1:5173",  # FastAPI server
+allowed_origins = [
+    origin.strip() for origin in settings.allowed_origins.split(",") if origin.strip()
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -39,7 +38,7 @@ async def root() -> dict[str, str]:
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
 
     origin = websocket.headers.get("origin")
-    if origin not in origins:
+    if origin not in allowed_origins:
         logger.warning(f"Connection attempt from disallowed origin: {origin}")
         await websocket.close(code=1008)  # Policy Violation
         return

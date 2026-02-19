@@ -8,6 +8,9 @@ type ChatMessage = {
   ts: number;
 };
 
+const HEARTBEAT_INTERVAL_MS = 25_000; // < 30s is safe through most proxies
+const HEARTBEAT_TIMEOUT_MS  = 60_000; // consider dead if no traffic for 60s
+
 function genClientId() {
   const rnd = Math.random().toString(36).slice(2, 8);
   return `${Date.now().toString(36)}-${rnd}`;
@@ -29,6 +32,10 @@ export const ChatApp: React.FC = () => {
   const wsRef = useRef<WebSocket | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
 
+  const lastSeenRef = useRef<number>(Date.now());
+  const heartbeatTimer = useRef<number | null>(null);
+  const watchdogTimer  = useRef<number | null>(null);
+
   // Auto-scroll to bottom when messages change
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
@@ -40,8 +47,28 @@ export const ChatApp: React.FC = () => {
     const ws = new WebSocket(url);
     wsRef.current = ws;
 
+    function startHeartbeat(ws: WebSocket) {
+      stopHeartbeat();
+      heartbeatTimer.current = window.setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) ws.send("__ping__");
+      }, HEARTBEAT_INTERVAL_MS);
+
+      watchdogTimer.current = window.setInterval(() => {
+        if (Date.now() - lastSeenRef.current > HEARTBEAT_TIMEOUT_MS) {
+          // stale: force a reconnect or mark as disconnected
+          try { ws.close(); } catch { /* empty */ }
+        }
+      }, 5_000);
+    }
+    function stopHeartbeat() {
+      if (heartbeatTimer.current) { clearInterval(heartbeatTimer.current); heartbeatTimer.current = null; }
+      if (watchdogTimer.current)  { clearInterval(watchdogTimer.current);  watchdogTimer.current  = null; }
+    }
+
     ws.onopen = () => {
       setConnected(true);
+      lastSeenRef.current = Date.now();
+      startHeartbeat(ws);      
       setMessages((prev) => [
         ...prev,
         { id: crypto.randomUUID(), text: "✅ Connected to WebSocket", author: "system", ts: Date.now() },
@@ -49,7 +76,9 @@ export const ChatApp: React.FC = () => {
     };
 
     ws.onmessage = (event) => {
+      lastSeenRef.current = Date.now();
       const raw = String(event.data);
+      if (raw === "__pong__" || raw === "__ping__") return;
       const author: Author =
         raw.startsWith("You wrote:") ? "me" : raw.includes("left the chat") || raw.includes("joined") ? "system" : "other";
 
@@ -61,6 +90,7 @@ export const ChatApp: React.FC = () => {
 
     ws.onclose = () => {
       setConnected(false);
+      
       setMessages((prev) => [
         ...prev,
         { id: crypto.randomUUID(), text: "⚠️ Disconnected", author: "system", ts: Date.now() },
@@ -68,6 +98,8 @@ export const ChatApp: React.FC = () => {
     };
 
     ws.onerror = () => {
+      lastSeenRef.current = Date.now();
+
       setMessages((prev) => [
         ...prev,
         { id: crypto.randomUUID(), text: "❌ WebSocket error", author: "system", ts: Date.now() },
@@ -75,6 +107,7 @@ export const ChatApp: React.FC = () => {
     };
 
     return () => {
+      stopHeartbeat(); 
       ws.close();
       wsRef.current = null;
     };

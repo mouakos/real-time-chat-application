@@ -54,6 +54,11 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
         while True:
             data = await websocket.receive_text()
 
+            if data.strip().lower() == "__ping__":
+                await manager.send_personal_message("__pong__", websocket)
+                logger.info(f"Heartbeat ping received from Client #{client_id}")
+                continue
+
             # Echo back to sender
             await manager.send_personal_message(f"You wrote: {data}", websocket)
 

@@ -40,6 +40,7 @@ A simple WebSocket-based real-time chat application built with FastAPI and React
 - **Python 3.13+**
 - **Node.js 24+** and npm
 - **Docker & Docker Compose** (for containerized deployment)
+- **Git**
   
 ### 🚀 Quick Start
 

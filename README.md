@@ -19,49 +19,80 @@ A simple WebSocket-based real-time chat application built with FastAPI and React
 
 ## 🛠️ Tech Stack
 
-**Backend:** FastAPI, WebSocket 
-**Frontend:** React, TypeScript, Vite
+### Backend
+- **[FastAPI](https://fastapi.tiangolo.com/)** - Modern Python web framework
+- **[WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)** - Real-time bidirectional communication
+- **[Uvicorn](https://www.uvicorn.org/)** - ASGI server
+- **[Pydantic](https://docs.pydantic.dev/)** - Data validation and settings management
 
-## 🚀 Quick Start
+### Frontend
+- **[React 19](https://react.dev/)** - UI component library
+- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
+- **[Vite](https://vitejs.dev/)** - Fast build tool and dev server
 
-### Using Docker (Recommended)
+### DevOps
+- **[Docker](https://www.docker.com/)** - Containerization platform
+- **[Docker Compose](https://docs.docker.com/compose/)** - Multi-container orchestration
+- **[Nginx](https://nginx.org/)** - Web server for production frontend
+
+## 📋 Prerequisites
+
+- **Python 3.13+**
+- **Node.js 24+** and npm
+- **Docker & Docker Compose** (for containerized deployment)
+  
+### 🚀 Quick Start
+
+### 1️⃣ Clone the Repository
 
 ```bash
-# Start all services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
+git clone https://github.com/mouakos/real-time-chat-application.git
+cd real-time-chat-application
 ```
 
-Access:
+### 2️⃣ Using Docker (Recommended)
+
+**Configure environment:**
+```bash
+cp backend/.env.template backend/.env  # Edit as needed
+```
+
+**Start services:**
+```bash
+docker-compose up -d
+```
+
+**Access:**
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
 
-### Local Development
+**Manage services:**
+```bash
+docker-compose logs -f      # View logs
+docker-compose down         # Stop services
+docker-compose up --build   # Rebuild and start
+```
+
+### 3️⃣ Local Development Setup
 
 **Backend:**
 ```bash
 cd backend
 python -m venv .venv
-.venv\Scripts\activate  # Windows
-source .venv/bin/activate  # macOS/Linux
+.venv\Scripts\activate              # Windows
+# source .venv/bin/activate         # macOS/Linux
 pip install -r requirements.txt
-fastapi dev
+cp .env.template .env               # Configure settings
+fastapi dev                         # Runs on http://localhost:8000
 ```
-Backend runs on: `http://localhost:8000`
 
-**Frontend:**
+**Frontend (new terminal):**
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev                         # Runs on http://localhost:5173
 ```
-
-Frontend runs on: `http://localhost:5173`
 
 ## 🔌 API Endpoints
 
@@ -69,22 +100,6 @@ Frontend runs on: `http://localhost:5173`
 - `GET /docs` - Interactive API documentation (Swagger UI)
 - `WS /ws/{client_id}` - WebSocket connection for real-time chat
 
-## ⚙️ Configuration
-
-Create a `.env` file in the `backend/` directory:
-
-```bash
-cp backend/.env.template backend/.env
-```
-
-Configure CORS allowed origins:
-
-```env
-# CORS Configuration
-ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
-```
-
-Add any additional origins as comma-separated values. See `backend/.env.template` for reference.
 
 ## 🎉 Start Chatting!
 
@@ -116,13 +131,14 @@ real-time-chat-application/
         ├── App.tsx              # Root component
         └── styles.css           # Global styles
 ```
-##  License
+## 📝 License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 Author
+## 👤 Author
 
-[@mouakos](https://github.com/mouakos)
+**Stephane Mouako**
+- GitHub: [@mouakos](https://github.com/mouakos)
 
 ---
 

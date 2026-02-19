@@ -89,21 +89,27 @@ export const ChatApp: React.FC = () => {
     };
 
     ws.onclose = () => {
+      stopHeartbeat();
+      const wasConnected = connected;
       setConnected(false);
       
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), text: "⚠️ Disconnected", author: "system", ts: Date.now() },
-      ]);
+      if (wasConnected) {
+        setMessages((prev) => [
+          ...prev,
+          { id: crypto.randomUUID(), text: "⚠️ Disconnected", author: "system", ts: Date.now() },
+        ]);
+      }
     };
 
     ws.onerror = () => {
-      lastSeenRef.current = Date.now();
-
-      setMessages((prev) => [
-        ...prev,
-        { id: crypto.randomUUID(), text: "❌ WebSocket error", author: "system", ts: Date.now() },
-      ]);
+      // Only log errors for established connections, not during initial handshake
+      if (connected) {
+        lastSeenRef.current = Date.now();
+        setMessages((prev) => [
+          ...prev,
+          { id: crypto.randomUUID(), text: "❌ WebSocket error", author: "system", ts: Date.now() },
+        ]);
+      }
     };
 
     return () => {
